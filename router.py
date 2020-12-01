@@ -89,7 +89,7 @@ def pipework(*args):
 
 def run_router(name):
     '''
-    Spawn a new docker container which mimics router behavior.
+    Spawns a new docker container which mimics router behavior.
     :param    name:     name of router
     '''
     client = docker.from_env()
@@ -102,6 +102,22 @@ def run_router(name):
     kernel_cap = ['NET_ADMIN', 'NET_RAW']
     container = client.containers.run(CONTAINER_IMAGE, name=name, detach=True, privileged=True, cap_add=kernel_cap)
     print ("The container was created with ID "+container.id+".")
+
+def stop_router(name):
+    '''
+    Terminates a docker container.
+    :param    name:     name of router
+    '''
+    client = docker.from_env()
+    containers = client.containers.list(all=True)
+    for container in containers:
+        if container.name == name:
+            container.stop()
+            container.remove(force=True)
+            print ("The container " + name +" was terminated!")
+            return
+
+    print ("The given container " + name +" is not found!")
 
 def create_bridge(name):
     '''
@@ -116,6 +132,20 @@ def create_bridge(name):
 
     ovs_vsctl("add-br", bridge_name)
     print ("The router bridge " + bridge_name +" was created!")
+
+def delete_bridge(name):
+    '''
+    Deletes a OVS bridge used for processing routing traffic.
+    :param    name:     name of router
+    '''
+    bridge_name = BRIDGE_PREFIX + name
+    bridges = ovs_vsctl('list-br')
+    if bridge_name not in bridges.splitlines():
+        print ("The given bridge " + bridge_name +" is not found!")
+        return
+
+    ovs_vsctl("del-br", bridge_name)
+    print ("The router bridge " + bridge_name +" was removed!")
 
 def config_pipework(name):
     '''
@@ -149,11 +179,13 @@ def config_nat(name):
     print ("The NAT configuration was enforced to " + name +"!")
 
 def main():
-    router_name = "router-188"
-    create_bridge(router_name)
-    run_router(router_name)
-    config_pipework(router_name)
-    config_nat(router_name)
+    router_name = "router-200"
+    #create_bridge(router_name)
+    #run_router(router_name)
+    #config_pipework(router_name)
+    #config_nat(router_name)
+    #delete_bridge(router_name)
+    #stop_router(router_name)
 
 if __name__ == '__main__':
     main()
