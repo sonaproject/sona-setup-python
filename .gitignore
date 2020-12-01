@@ -1,0 +1,17 @@
+AUTHORS
+build/*
+build-stamp
+ChangeLog
+dist/
+doc/build
+*.DS_Store
+*.pyc
+*.spec
+sona_cni.egg-info/
+pbr*.egg/
+*~
+/.*
+!/.gitignore
+!/.gitreview
+!/.mailmap
+!/.pylintrc
