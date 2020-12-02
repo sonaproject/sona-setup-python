@@ -46,5 +46,9 @@ def create(name):
         stop_router(name)
         return 'delete %s' % name
 
+@app.route('/api/v1/', methods = ['GET'])
+def default():
+    return "It works!"
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="8080")
+    app.run(debug=True)
